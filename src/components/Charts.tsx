@@ -2,6 +2,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Cell,
 } from 'recharts';
+import type { TooltipContentProps } from 'recharts';
 import type { SimulationResult, SimulationInputs } from '../utils/calculations';
 import { formatCurrency } from '../utils/calculations';
 
@@ -17,16 +18,22 @@ const COLORS = {
   sac: '#f97316',            // laranja
 };
 
-function CustomTooltip({ active, payload, label }: any) {
+function CustomTooltip({ active, payload, label }: Partial<TooltipContentProps<number, string>>) {
   if (!active || !payload?.length) return null;
   return (
     <div className="rounded-xl px-4 py-3" style={{ background: '#1a1810', border: '1px solid rgba(242,237,226,0.1)', boxShadow: '0 12px 40px rgba(0,0,0,0.5)' }}>
       <p className="text-xs font-medium mb-2" style={{ color: 'rgba(242,237,226,0.5)' }}>{label}</p>
-      {payload.map((entry: any) => (
-        <p key={entry.dataKey} className="text-sm font-semibold tabular-nums" style={{ color: entry.fill || entry.color }}>
-          {formatCurrency(entry.value)}
-        </p>
-      ))}
+      {payload.map((entry) => {
+        const value = Array.isArray(entry.value) ? entry.value[0] : entry.value;
+        const numericValue = typeof value === 'number' ? value : Number(value ?? 0);
+        const key = String(entry.dataKey ?? entry.name ?? entry.graphicalItemId);
+
+        return (
+          <p key={key} className="text-sm font-semibold tabular-nums" style={{ color: entry.fill || entry.color }}>
+            {formatCurrency(numericValue)}
+          </p>
+        );
+      })}
     </div>
   );
 }
