@@ -24,7 +24,7 @@ export function Hero() {
           <span className="font-semibold text-red-400">No financiamento,</span> o banco cobra juros sobre cada parcela — o imóvel pode te custar o dobro do preço.
         </p>
         <p className="text-base text-text-secondary/80 leading-relaxed">
-          <span className="font-semibold" style={{ color: '#4ade80' }}>No consórcio,</span> você paga só a taxa de administração — sem juros, sem entrada obrigatória.
+          <span className="font-semibold" style={{ color: '#4ade80' }}>No consórcio,</span> você paga a taxa de administração e a correção da carta pela inflação no aniversário do grupo — sem juros, sem entrada obrigatória.
         </p>
         <p className="text-sm text-text-secondary/50 pt-1">Configure abaixo e veja a diferença exata no seu caso.</p>
       </div>
