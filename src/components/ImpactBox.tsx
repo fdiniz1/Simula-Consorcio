@@ -32,8 +32,11 @@ export function ImpactBox({ result }: ImpactBoxProps) {
             className="font-display text-4xl md:text-5xl font-black"
             style={{ color: '#4ade80' }}
           />
-          <p className="text-sm text-text-secondary/60 mt-2">
-            O valor que os bancos pegariam de Juros
+          <p className="text-sm text-text-secondary/60 mt-2 leading-relaxed">
+            O valor que os bancos pegariam de Juros.<br/>
+            <span className="text-[11px] opacity-75">
+              *Este é o seu potencial de economia caso a contemplação ocorra por sorteio.
+            </span>
           </p>
         </div>
 
