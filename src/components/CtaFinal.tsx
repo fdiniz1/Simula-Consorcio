@@ -5,10 +5,9 @@ const WA_NUMBER = '556181479862';
 
 interface CtaFinalProps {
   result: SimulationResult;
-  onCtaClick?: () => void;
 }
 
-export function CtaFinal({ result, onCtaClick }: CtaFinalProps) {
+export function CtaFinal({ result }: CtaFinalProps) {
   const economia = Math.max(result.economiaVsPrice, result.economiaVsSac);
   const valorImovel = result.consorcio.credito;
 
