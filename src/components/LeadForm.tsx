@@ -78,6 +78,23 @@ async function saveLead(data: FormState, inputs: SimulationInputs, result: Simul
   }
 }
 
+async function notifyLead(data: FormState, inputs: SimulationInputs, result: SimulationResult) {
+  try {
+    if (!client) {
+      client = generateClient<Schema>();
+    }
+    await client.mutations.notifyLead({
+      nome: data.nome.trim(),
+      email: data.email.trim().toLowerCase(),
+      telefone: data.telefone.replace(/\D/g, ''),
+      valorImovel: inputs.valorImovel,
+      economia: result.economiaVsPrice,
+    });
+  } catch {
+    console.warn('Falha ao enviar notificação de e-mail.');
+  }
+}
+
 export function LeadForm({ inputs, result, onSubmitted }: LeadFormProps) {
   const [form, setForm] = useState<FormState>({ nome: '', email: '', telefone: '' });
   const [errors, setErrors] = useState<FormErrors>({});
@@ -100,6 +117,7 @@ export function LeadForm({ inputs, result, onSubmitted }: LeadFormProps) {
     }
     setSubmitting(true);
     await saveLead(form, inputs, result);
+    await notifyLead(form, inputs, result);
     setSubmitting(false);
     onSubmitted();
   }
