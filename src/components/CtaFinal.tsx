@@ -12,7 +12,7 @@ export function CtaFinal({ result }: CtaFinalProps) {
   const valorImovel = result.consorcio.credito;
 
   const waText = encodeURIComponent(
-    `Olá Fabrício! Fiz a simulação e vi que vou pagar ${formatCurrency(economia)} a mais no financiamento para um imóvel de ${formatCurrency(valorImovel)}. Quero entender melhor o consórcio.`
+    `Olá Victor! Fiz a simulação e vi que vou pagar ${formatCurrency(economia)} a mais no financiamento para um imóvel de ${formatCurrency(valorImovel)}. Quero entender melhor o consórcio.`
   );
   const waUrl = `https://wa.me/${WA_NUMBER}?text=${waText}`;
 
