@@ -6,7 +6,7 @@ const ses = new SESClient({});
 // ATENÇÃO: o endereço de origem precisa estar verificado no AWS SES.
 // Se o SES estiver em sandbox, o destinatário também precisa estar verificado.
 const FROM_EMAIL = 'simulador@cashwise.com.br';
-const TO_EMAIL = 'victor.souza@cashwise.com.br';
+const TO_EMAILS = ['victor.souza@cashwise.com.br', 'fabricio.diniz@cashwise.com.br'];
 
 type MutationArgs = {
   nome: string;
@@ -27,7 +27,7 @@ export const handler: AppSyncResolverHandler<MutationArgs, string> = async (even
   await ses.send(
     new SendEmailCommand({
       Source: FROM_EMAIL,
-      Destination: { ToAddresses: [TO_EMAIL] },
+      Destination: { ToAddresses: TO_EMAILS },
       Message: {
         Subject: { Data: `Novo lead do simulador: ${nome}` },
         Body: {
