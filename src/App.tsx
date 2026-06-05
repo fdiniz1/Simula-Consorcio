@@ -73,7 +73,7 @@ export default function App() {
         </section>
 
         {/* CTA */}
-        <CtaFinal result={result} onCtaClick={() => setShowLeadForm(true)} />
+        <CtaFinal result={result} />
       </main>
 
       {/* Lead Form Modal */}

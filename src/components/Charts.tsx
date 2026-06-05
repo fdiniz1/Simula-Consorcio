@@ -42,13 +42,7 @@ const tickStyle = { fill: 'rgba(242,237,226,0.4)', fontSize: 11, fontFamily: 'In
 const cardStyle: React.CSSProperties = { background: '#16140F', border: '1px solid rgba(242,237,226,0.07)' };
 
 export function Charts({ result }: ChartsProps) {
-  const { consorcio, price, sac, totalComEntradaPrice, totalComEntradaSac } = result;
-
-  const totalData = [
-    { name: 'Consórcio', total: consorcio.totalPago, fill: '#4ade80' },
-    { name: 'Parcela Fixa', total: totalComEntradaPrice, fill: COLORS.price },
-    { name: 'Parcela Decrescente', total: totalComEntradaSac, fill: COLORS.sac },
-  ];
+  const { consorcio, price, sac } = result;
 
   // Parcelas: mostra o intervalo do consórcio (com redutor) vs financiamentos
   const parcelaData = [
@@ -59,36 +53,7 @@ export function Charts({ result }: ChartsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Gráfico 1 – Total pago */}
-      <div className="rounded-2xl p-6 md:p-8 animate-fade-up" style={cardStyle}>
-        <h3 className="text-xl font-bold text-text-primary mb-1 text-center">Custo total desembolsado</h3>
-        <p className="text-sm text-text-secondary/50 mb-8 text-center">Tudo que você vai pagar do início ao fim</p>
-        <ResponsiveContainer width="100%" height={240}>
-          <BarChart data={totalData} margin={{ top: 8, right: 8, left: 8, bottom: 8 }} barCategoryGap="35%">
-            <CartesianGrid vertical={false} stroke="rgba(242,237,226,0.05)" />
-            <XAxis dataKey="name" tick={{ ...tickStyle, fontSize: 10 }} axisLine={false} tickLine={false} />
-            <YAxis tick={tickStyle} axisLine={false} tickLine={false} tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} width={62} />
-            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(242,237,226,0.03)' }} />
-            <Bar dataKey="total" radius={[6, 6, 0, 0]} maxBarSize={80}>
-              {totalData.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-        <div className="flex items-center gap-5 mt-5 justify-center flex-wrap">
-          {[
-            { label: 'Consórcio', color: '#4ade80' },
-            { label: 'Parc. Fixa', color: COLORS.price },
-            { label: 'Parc. Decrescente', color: COLORS.sac },
-          ].map((item) => (
-            <div key={item.label} className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-full" style={{ background: item.color }} />
-              <span className="text-xs font-medium" style={{ color: 'rgba(242,237,226,0.6)' }}>{item.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
+    <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 max-w-3xl mx-auto">
       {/* Gráfico 2 – Parcelas */}
       <div className="rounded-2xl p-6 md:p-8 animate-fade-up delay-100" style={cardStyle}>
         <h3 className="text-xl font-bold text-text-primary mb-1 text-center">Parcela mensal comparada</h3>
@@ -111,3 +76,4 @@ export function Charts({ result }: ChartsProps) {
     </div>
   );
 }
+
