@@ -4,8 +4,8 @@ import type { AppSyncResolverHandler } from 'aws-lambda';
 const ses = new SESClient({ region: 'us-east-1' });
 
 // FROM_EMAIL deve ser um endereço verificado no AWS SES (ou domínio verificado)
-const FROM_EMAIL = 'simulador@cashwise.com.br';
-const TO_EMAILS = ['victor.souza@cashwise.com.br', 'fabricio.diniz@cashwise.com.br'];
+const FROM_EMAIL = 'fabricio.diniz@cashwise.com.br';
+const TO_EMAILS = ['fabricio.diniz@cashwise.com.br']; // Removido victor.souza temporariamente pois requer verificação no Sandbox
 
 type MutationArgs = {
   nome: string;
