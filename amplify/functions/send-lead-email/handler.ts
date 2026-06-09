@@ -4,8 +4,8 @@ import type { AppSyncResolverHandler } from 'aws-lambda';
 const ses = new SESClient({ region: 'us-east-1' });
 
 // FROM_EMAIL deve ser um endereço verificado no AWS SES (ou domínio verificado)
-const FROM_EMAIL = 'fabricio.diniz@cashwise.com.br';
-const TO_EMAILS = ['fabricio.diniz@cashwise.com.br']; // Removido victor.souza temporariamente pois requer verificação no Sandbox
+const FROM_EMAIL = 'fabriciofernandesdiniz@hotmail.com';
+const TO_EMAILS = ['fabricio.diniz@cashwise.com.br', 'victor.souza@cashwise.com.br'];
 
 type MutationArgs = {
   nome: string;
@@ -24,7 +24,7 @@ export const handler: AppSyncResolverHandler<MutationArgs, string> = async (even
   const { nome, email, telefone, valorImovel, economia } = event.arguments;
 
   try {
-    await ses.send(
+    const response = await ses.send(
       new SendEmailCommand({
         Source: FROM_EMAIL,
         Destination: { ToAddresses: TO_EMAILS },
@@ -38,18 +38,17 @@ export const handler: AppSyncResolverHandler<MutationArgs, string> = async (even
                   <tr><td style="padding:6px 12px 6px 0;font-weight:bold;">Nome</td><td>${nome}</td></tr>
                   <tr><td style="padding:6px 12px 6px 0;font-weight:bold;">E-mail</td><td>${email}</td></tr>
                   <tr><td style="padding:6px 12px 6px 0;font-weight:bold;">Telefone</td><td>${telefone}</td></tr>
-                  <tr><td style="padding:6px 12px 6px 0;font-weight:bold;">Valor do imóvel</td><td>${formatBRL(valorImovel)}</td></tr>
-                  <tr><td style="padding:6px 12px 6px 0;font-weight:bold;">Economia estimada</td><td>${formatBRL(economia)}</td></tr>
                 </table>
               `,
             },
             Text: {
-              Data: `Novo lead: ${nome} | ${email} | ${telefone} | Imóvel: ${formatBRL(valorImovel)} | Economia: ${formatBRL(economia)}`,
+              Data: `Novo lead: ${nome} | ${email} | ${telefone}`,
             },
           },
         },
       })
     );
+    console.log('[send-lead-email] Enviado com sucesso. MessageId:', response.MessageId);
   } catch (err) {
     console.error('[send-lead-email] SES error:', JSON.stringify(err));
     throw err;

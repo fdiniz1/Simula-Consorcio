@@ -26,3 +26,6 @@ amplify_outputs.json
 *.njsproj
 *.sln
 *.sw?
+
+social-output/
+.codex/
