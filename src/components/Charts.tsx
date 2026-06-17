@@ -1,7 +1,6 @@
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, Cell,
-} from 'recharts';
+  ResponsiveContainer, Cell} from 'recharts';
 import type { TooltipContentProps } from 'recharts';
 import type { SimulationResult, SimulationInputs } from '../utils/calculations';
 import { formatCurrency } from '../utils/calculations';
@@ -12,10 +11,10 @@ interface ChartsProps {
 }
 
 const COLORS = {
-  consorcioMin: '#4ade80',   // verde — menor parcela possível
-  consorcio: '#a3e635',      // lima — parcela padrão
-  price: '#ef4444',          // vermelho
-  sac: '#f97316',            // laranja
+  consorcioMin: '#4ade80',   // verde — redutor 50%
+  consorcio: '#a3e635',      // lima — integral
+  price: '#ef4444',          // vermelho — PRICE
+  sac: '#f97316',            // laranja — SAC
 };
 
 function CustomTooltip({ active, payload, label }: Partial<TooltipContentProps<number, string>>) {
@@ -42,38 +41,69 @@ const tickStyle = { fill: 'rgba(242,237,226,0.4)', fontSize: 11, fontFamily: 'In
 const cardStyle: React.CSSProperties = { background: '#16140F', border: '1px solid rgba(242,237,226,0.07)' };
 
 export function Charts({ result }: ChartsProps) {
-  const { consorcio, price, sac } = result;
+  const { consorcio, price, sac, totalComEntradaPrice, totalComEntradaSac } = result;
 
-  // Parcelas: mostra o intervalo do consórcio (com redutor) vs financiamentos
+  // GRÁFICO 1: Fluxo de caixa e desembolso imediato (Mantido o seu original)
   const parcelaData = [
-    { name: 'Consórcio (mín) ★', valor: consorcio.parcelaMensalMin, fill: COLORS.consorcioMin },
-    { name: 'Consórcio (padrão)', valor: consorcio.parcelaMensal, fill: COLORS.consorcio },
-    { name: 'Parc. Fixa (banco)', valor: price.primeiroMes, fill: COLORS.price },
-    { name: 'Parc. Decrescente', valor: sac.primeiroMes, fill: COLORS.sac },
+    { name: 'Consórcio (Red. 50%)', valor: consorcio.parcelaMensalMin, fill: COLORS.consorcioMin },
+    { name: 'Consórcio (Integral)', valor: consorcio.parcelaMensal, fill: COLORS.consorcio },
+    { name: 'Financiamento PRICE', valor: price.primeiroMes, fill: COLORS.price },
+    { name: 'Financiamento SAC (A0)', valor: sac.primeiroMes, fill: COLORS.sac },
+  ];
+
+  // GRÁFICO 2: O argumento de fechamento (Custo Total da operação)
+  // Usamos a cor padrão do consórcio (Integral/Padrão) para contrastar com os financiamentos
+  const custoTotalData = [
+    { name: 'Consórcio', valor: consorcio.totalPago, fill: COLORS.consorcio },
+    { name: 'Financ. PRICE', valor: totalComEntradaPrice, fill: COLORS.price },
+    { name: 'Financ. SAC', valor: totalComEntradaSac, fill: COLORS.sac },
   ];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 max-w-3xl mx-auto">
-      {/* Gráfico 2 – Parcelas */}
-      <div className="rounded-2xl p-6 md:p-8 animate-fade-up delay-100" style={cardStyle}>
-        <h3 className="text-xl font-bold text-text-primary mb-1 text-center">Parcela mensal comparada</h3>
-        <p className="text-sm text-text-secondary/50 mb-8 text-center">Impacto no seu orçamento mês a mês</p>
+    /* Forçado layout duplo fluido para ocupar toda a largura estendida da tela em calls */
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+      
+      {/* CARD 1: COMPARATIVO DE PARCELAS */}
+      <div className="rounded-2xl p-6 md:p-8 animate-fade-up delay-100 flex flex-col justify-between" style={cardStyle}>
+        <div>
+          <h3 className="text-base font-semibold text-text-primary mb-1 text-center lg:text-left">Comparativo de Parcelas Iniciais</h3>
+          <p className="text-xs text-text-secondary/50 mb-8 text-center lg:text-left">Esforço imediato no caixa mensal do cliente</p>
+        </div>
+        
         <ResponsiveContainer width="100%" height={240}>
           <BarChart layout="vertical" data={parcelaData} margin={{ top: 4, right: 28, left: 4, bottom: 4 }} barCategoryGap="22%">
             <CartesianGrid horizontal={false} stroke="rgba(242,237,226,0.05)" />
             <XAxis type="number" tickFormatter={(v) => `R$${(v / 1000).toFixed(1)}k`} tick={tickStyle} axisLine={false} tickLine={false} />
-            <YAxis dataKey="name" type="category" tick={{ ...tickStyle, fontSize: 10, fontWeight: 500 }} axisLine={false} tickLine={false} width={120} />
+            <YAxis dataKey="name" type="category" tick={{ ...tickStyle, fontSize: 10, fontWeight: 500 }} axisLine={false} tickLine={false} width={130} />
             <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(242,237,226,0.03)' }} />
-            <Bar dataKey="valor" radius={[0, 6, 6, 0]} maxBarSize={36}>
+            <Bar dataKey="valor" radius={[0, 6, 6, 0]} maxBarSize={32}>
               {parcelaData.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
             </Bar>
           </BarChart>
         </ResponsiveContainer>
-        <p className="text-[11px] text-text-secondary/35 text-center mt-4">
-          ★ Parcela mínima com redutor de 50% · sujeito a reajuste pelo INCC
-        </p>
       </div>
+
+      {/* CARD 2: COMPARATIVO DE CUSTO TOTAL (O argumento de impacto) */}
+      <div className="rounded-2xl p-6 md:p-8 animate-fade-up delay-200 flex flex-col justify-between" style={cardStyle}>
+        <div>
+          <h3 className="text-base font-semibold text-text-primary mb-1 text-center lg:text-left">Custo Total da Operação</h3>
+          <p className="text-xs text-text-secondary/50 mb-8 text-center lg:text-left">O tamanho do patrimônio que é consumido por juros bancários</p>
+        </div>
+
+        <ResponsiveContainer width="100%" height={240}>
+          {/* Layout vertical também para manter o padrão estético limpo ao lado do Card 1 */}
+          <BarChart layout="vertical" data={custoTotalData} margin={{ top: 4, right: 28, left: 4, bottom: 4 }} barCategoryGap="28%">
+            <CartesianGrid horizontal={false} stroke="rgba(242,237,226,0.05)" />
+            <XAxis type="number" tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} tick={tickStyle} axisLine={false} tickLine={false} />
+            <YAxis dataKey="name" type="category" tick={{ ...tickStyle, fontSize: 10, fontWeight: 500 }} axisLine={false} tickLine={false} width={130} />
+            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(242,237,226,0.03)' }} />
+            <Bar dataKey="valor" radius={[0, 6, 6, 0]} maxBarSize={32}>
+              {custoTotalData.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
     </div>
   );
 }
-
